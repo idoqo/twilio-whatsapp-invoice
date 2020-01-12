@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'Controller@index')->name('home');
+
+Route::get('/checkout/{id}', 'Controller@checkout')->name('checkout');
