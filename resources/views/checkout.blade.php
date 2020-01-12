@@ -35,7 +35,19 @@
                     </div>
                 </li>
             </ul>
-            <a href="#" class="btn btn-primary btn-block">Pay</a>
+            <form action="/charge" method="POST">
+                {{csrf_field()}}
+                <script
+                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                    data-key="{{env('STRIPE_PUB_KEY')}}"
+                    data-amount="{{$product->price * 100}}"
+                    data-name="Stripe Demo"
+                    data-description="Twilio Commerce: {{$product->description}}"
+                    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                    data-locale="auto"
+                    data-currency="usd">
+                </script>
+            </form>
         </div>
     </div>
 </div>

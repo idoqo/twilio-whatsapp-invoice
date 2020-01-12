@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Stripe\Charge;
+use Stripe\Customer;
+use Stripe\Stripe;
 
 class Controller extends BaseController
 {
@@ -25,5 +29,26 @@ class Controller extends BaseController
             'product' => $product
         ];
         return view('checkout', $data);
+    }
+
+    public function charge(Request $request) {
+        try {
+            Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+
+            $customer = Customer::create(array(
+                'email' => $request->get('stripeEmail'),
+                'source' => $request->get('stripeToken')
+            ));
+
+            $charge = Charge::create(array(
+                'customer' => $customer->id,
+                'amount' => 1999,
+                'currency' => 'usd'
+            ));
+
+            return 'Thanks for your purchase!';
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
     }
 }
