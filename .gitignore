@@ -12,3 +12,5 @@ npm-debug.log
 yarn-error.log
 /public/images/*
 !/public/images/.gitkeep
+/public/invoices/*
+!/public/invoices/.gitkeep
