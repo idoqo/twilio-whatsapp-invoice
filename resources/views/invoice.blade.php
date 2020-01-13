@@ -9,78 +9,36 @@
             padding: 1.5%;
             border: 1px solid black;
         }
-        .header img{
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-        .header{
-            text-align: center;
-        }
-        .no-margin{
-            margin: 0;
-        }
-        .left{
-            float: left;
-        }
-        .right{
-            float: right;
-        }
-        .roow{
-            margin: -2px;
-        }
-        .margin-20{
-            margin-right: 20px;
-        }
-        .centre{
-            text-align: center;
-        }
-        .clearfix{
-            clear: both;
-        }
-        .fees-content{
-            padding: 30px 0px 30px 0px;
-        }
-        .amount span{
-            float: right;
-        }
-
-        .signarea p{
-            text-align: right;
-            margin-top: 60px;
-        }
-
     </style>
 </head>
 <body>
 <div class="body">
-    <div class="header">
-        <h3 class="no-margin">Twilio Commerce</h3>
-        <h5 class="no-margin">supersales@example.com</h5>
+    <div style="text-align: center">
+        <h3 style="margin: 0;">Twilio Commerce</h3>
+        <h5 style="margin: 0;">supersales@example.com</h5>
     </div>
     <div class="content">
-        <div class="roow">
-            <div class="left">
-                <p>Invoice Number:- TWC-{{$product->id}}</p>
+        <div style="margin: -2px;">
+            <div style="float: left;">
+                <p>Invoice Number:- TWC-{{$product->id}} </p>
             </div>
-            <div class="right">
-                <p class="margin-20">Date: 22nd May 2018 </p>
+            <div style="float: right;">
+                <p style="margin-right: 20px;">
+                    Date: {{\Carbon\Carbon::now()->toFormattedDateString()}}
+                </p>
             </div>
         </div>
-        <div class="clearfix"></div>
-        <div class="centre">
+        <div style="clear: both;"></div>
+        <div class="centre" style="text-align: center;">
             <h3>Invoice</h3>
         </div>
         <div>
-            <p>Name:- John Doe</p>
+            <p>Name: {{$user->name}}</p>
         </div>
         <hr/>
-        <div class="fees-content">
-            <p class="amount">Course Fees
-                <span> 3000</span>
-            </p>
-            <p class="amount">GST
-                <span> 100</span>
+        <div style="padding: 30px 0px 30px 0px;">
+            <p class="amount">{{$product->name}}
+                <span style="float: right;"> {{$product->price}}</span>
             </p>
         </div>
         <hr/>

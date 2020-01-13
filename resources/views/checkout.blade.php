@@ -36,6 +36,7 @@
                 </li>
             </ul>
             <form action="/charge" method="POST">
+                <input name="product_id" value="2" type="hidden"/>
                 {{csrf_field()}}
                 <script
                     src="https://checkout.stripe.com/checkout.js" class="stripe-button"

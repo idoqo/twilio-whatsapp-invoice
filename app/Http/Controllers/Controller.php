@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Product;
+use App\User;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -11,8 +13,6 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Log;
 use Stripe\Charge;
 use Stripe\Customer;
-use Stripe\Invoice;
-use Stripe\InvoiceItem;
 use Stripe\Stripe;
 use Twilio\Rest\Client;
 
@@ -30,29 +30,32 @@ class Controller extends BaseController
 
     public function checkout ($id) {
         $product = \App\Product::findOrFail($id);
+        $user = User::find(1); // replace this with the authenticated user
         $data = [
-            'product' => $product
+            'product' => $product,
+            'user' => $user
         ];
-        $invoicePath = public_path('invoices/invoice-'.$product->id.".pdf");
-        $pdf = PDF::loadView('invoice', $data)
+        $invoiceFile = "invoice-".$product->id.".pdf";
+        $invoicePath = public_path("invoices/".$invoiceFile);
+        PDF::loadView('invoice', $data)
             ->save($invoicePath);
         $twilio = new Client(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
-        $message = $twilio->messages->create(
-            "whatsapp:+2349074919559", [
-                "from" => "whatsapp:+14155238886",
+        $twilio->messages->create(
+            "whatsapp:".$user->phone_number, [
+                "from" => "whatsapp:".env('TWILIO_SANDBOX_NUMBER'),
                 "body" => "Here's your invoice!",
-                "mediaUrl" => ["https://f82d4b53.ngrok.io/invoices/invoice-2.pdf"]
+                "mediaUrl" => ["https://09530f6d.ngrok.io/invoices/".$invoiceFile]
             ]
         );
-        Log::info($message->sid);
         return view('checkout', $data);
     }
 
     public function charge(Request $request) {
+        $product = Product::find($request->get('product_id'));
         try {
             Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
-            $amount = 1999;
+            $amount = $product->price * 100;
             $customer = Customer::create(array(
                 'email' => $request->get('stripeEmail'),
                 'source' => $request->get('stripeToken')
