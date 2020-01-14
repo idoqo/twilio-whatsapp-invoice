@@ -43,7 +43,7 @@ class Controller extends BaseController
             "whatsapp:".$user->phone_number, [
                 "from" => "whatsapp:".env('TWILIO_SANDBOX_NUMBER'),
                 "body" => "Here's your invoice!",
-                "mediaUrl" => ["https://09530f6d.ngrok.io/invoices/".$invoiceFile]
+                "mediaUrl" => [env("NGROK_URL")."/invoices/".$invoiceFile]
             ]
         );
         return view('checkout', $data);
@@ -54,20 +54,16 @@ class Controller extends BaseController
         try {
             Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
-            $amount = $product->price * 100;
+            $amount = ($product->price) * 100;
             $customer = Customer::create(array(
                 'email' => $request->get('stripeEmail'),
                 'source' => $request->get('stripeToken')
             ));
-
-
-            $charge = Charge::create(array(
+            Charge::create(array(
                 'customer' => $customer->id,
                 'amount' => $amount,
                 'currency' => 'usd'
             ));
-            dd($charge->receipt_url);
-
             return 'Thanks for your purchase!';
         } catch (\Exception $ex) {
             return $ex->getMessage();
